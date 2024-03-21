@@ -5,45 +5,48 @@ using namespace std;
 class Solution {
 public:
     vector<int> findSubstring(string s, vector<string>& words) {
-        int size = words[0].size() * words.size();
-        vector<int> result;
-        if(s.size()<size) return result;
+        vector<int> res;
+        // 设 words中所有单词的长度为 d
+        int n = s.size(), m = words.size(), d = words[0].size();
+        int len = 0;
+        unordered_map<string, int> um;
+        for (string w : words) {
+            len += w.size();
+            um[w]++;
+        }
 
-        unordered_map<string, int>map;
-        for(string a:words)
-            if(map.find(a) != map.end())
-                map[a] = map[a] + 1;
-            else
-                map[a] = 1;
-        for(int i=0; i<s.size() - size + 1; i++)
-        {
-            string str = s.substr(i, size);
-            if(issub(str, map, words[0].size())) result.push_back(i);
-        }
-        return result;
-    }
-    bool issub(string str, unordered_map<string, int>map, int size)
-    {
-        int i=0;
-        unordered_map<string, int> a(map);
-        for(i=0; (i+size)<=str.size(); i = i +size)
-        {
-            string s = str.substr(i, size);
-            auto p = a.find(s);
-            if(p != a.end() && p->second != 0)
-            {
-                p->second = p->second - 1;
+        // init: 初始化长度为 d 的数组
+        vector<unordered_map<string, int> > vu(d);
+        for (int i = 0; i < d && i + len <= n; i++) {
+            for (int j = i; j < i + len; j += d) {
+                string w = s.substr(j, d);
+                vu[i][w]++;
             }
-            else
-                return false;
+            if (vu[i] == um) {
+                res.emplace_back(i);
+            }
         }
-        return true;
+
+        // sliding window: 滑动窗口，每次移动 d 个位置
+        for (int i = d; i + len <= n; i++) {
+            int r = i % d;
+            string wa = s.substr(i - d, d), wb = s.substr(i + len - d, d);
+            if(--vu[r][wa] == 0) vu[r].erase(wa);
+            vu[r][wb]++;
+            if (vu[r] == um) {
+                res.emplace_back(i);
+            }
+        }
+
+        return res;
+
     }
+
 };
 int main() {
     Solution solution;
-    string s = "wordgoodgoodgoodbestword";
-    vector<string> words = {"word","good","best","good"};
+    string s = "barfoofoobarthefoobarman";
+    vector<string> words = {"bar","foo","the"};
     vector<int> a = solution.findSubstring(s, words);
     for(int i :a)
         cout<<i;
