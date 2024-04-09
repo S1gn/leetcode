@@ -5,6 +5,7 @@ class Solution {
 public:
     vector<string> letterCombinations(string digits) {
         vector<string> lastresult = {};
+        if(digits.length() == 0) return lastresult;
         vector<string> result = {""};
         for(char c: digits)
         {
@@ -31,7 +32,7 @@ public:
         if(i == '7') return "pqrs";
         if(i == '8') return "tuv";
         if(i == '9') return "wxyz";
-         
+        return "";
     }
 };
 int main() {
