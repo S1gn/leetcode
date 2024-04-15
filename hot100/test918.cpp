@@ -47,6 +47,25 @@ public:
 
         return max(leftmax, max(rightmax, midmax));
     }
+    int maxSubarraySumCircular(vector<int>& nums) {
+        if(nums.size() == 0) return 0;
+        vector<int> leftmax(nums.size());
+        leftmax[0] = nums[0];
+        int res = nums[0];
+        int leftSum = nums[0];
+        for(int i = 1; i< nums.size(); i++)
+        {
+            leftSum += nums[i];
+            leftmax[i] = max(leftmax[i - 1], leftSum);
+        }
+        int rightsum = 0;
+        for(int i = nums.size() - 1; i>0; i--)
+        {
+            rightsum += nums[i];
+            res = max(res, rightsum + leftmax[i - 1]);
+        }
+        return max(res, maxSubArray(nums));
+    }
 };
 int main() {
     Solution solution;
