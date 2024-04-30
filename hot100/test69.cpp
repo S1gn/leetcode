@@ -19,5 +19,7 @@ public:
 };
 int main() {
     Solution solution;
+    string a;
+    cout<<solution.mySqrt(10);
     return 0;
 }
